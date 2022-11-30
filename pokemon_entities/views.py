@@ -5,7 +5,7 @@ from django.http import HttpResponseNotFound
 from django.shortcuts import render
 from django.utils import timezone
 
-from .models import Pokemon, PokemonEntity
+from pokemon_entities.models import Pokemon, PokemonEntity
 
 MOSCOW_CENTER = [55.751244, 37.618423]
 DEFAULT_IMAGE_URL = (
@@ -66,12 +66,35 @@ def show_pokemon(request, pokemon_id):
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
+    previous_pokemon = pokemon.previous_evolution
+    next_pokemon = pokemon.evolutions.first()
+    try:
+        previous_pokemon_evolution = {
+            "pokemon_id": previous_pokemon.id,
+            "title_ru": previous_pokemon.title,
+            "img_url": previous_pokemon.image.url,
+        }
+    except AttributeError:
+        previous_pokemon_evolution = None
+
+    try:
+        next_pokemon_evolution = {
+            "pokemon_id": next_pokemon.id,
+            "title_ru": next_pokemon.title,
+            "img_url": next_pokemon.image.url,
+        }
+
+    except AttributeError:
+        next_pokemon_evolution = None
+
     chosen_pokemon = {
         "title_ru": pokemon.title,
         "img_url": request.build_absolute_uri(pokemon.image.url),
-        "title_en":pokemon.title_en,
+        "title_en": pokemon.title_en,
         "title_jp": pokemon.title_jp,
-        "description": pokemon.description
+        "description": pokemon.description,
+        "previous_evolution": previous_pokemon_evolution,
+        "next_evolution": next_pokemon_evolution
     }
 
     pokemon_entities = PokemonEntity.objects.filter(pokemon__title=pokemon)
