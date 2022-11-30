@@ -3,6 +3,7 @@ import json
 import folium
 from django.http import HttpResponseNotFound
 from django.shortcuts import render
+from django.utils import timezone
 
 from .models import Pokemon, PokemonEntity
 
@@ -30,7 +31,7 @@ def add_pokemon(folium_map, lat, lon, image_url=DEFAULT_IMAGE_URL):
 def show_all_pokemons(request):
 
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    pokemon_entities = PokemonEntity.objects.all()
+    pokemon_entities = PokemonEntity.objects.filter(Appeared_at__lte=timezone.localtime(), Disappeared_at__gte=timezone.localtime())
     for pokemon in pokemon_entities:
         add_pokemon(
             folium_map, pokemon.Lat,
@@ -60,24 +61,24 @@ def show_all_pokemons(request):
 
 
 def show_pokemon(request, pokemon_id):
-    with open('pokemon_entities/pokemons.json', encoding='utf-8') as database:
-        pokemons = json.load(database)['pokemons']
-
-    for pokemon in pokemons:
-        if pokemon['pokemon_id'] == int(pokemon_id):
-            requested_pokemon = pokemon
-            break
-    else:
+    pokemon = Pokemon.objects.get(id=pokemon_id)
+    if pokemon.id != int(pokemon_id):
         return HttpResponseNotFound('<h1>Такой покемон не найден</h1>')
-
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
-    for pokemon_entity in requested_pokemon['entities']:
+
+    chosen_pokemon = {
+        "title_ru": pokemon.title,
+        "img_url": request.build_absolute_uri(pokemon.image.url)
+    }
+
+    pokemon_entities = PokemonEntity.objects.filter(pokemon__title=pokemon)
+    for pokemon in pokemon_entities:
         add_pokemon(
-            folium_map, pokemon_entity['lat'],
-            pokemon_entity['lon'],
-            pokemon['img_url']
+            folium_map, pokemon.Lat,
+            pokemon.Lon,
+            request.build_absolute_uri(pokemon.pokemon.image.url)
         )
 
     return render(request, 'pokemon.html', context={
-        'map': folium_map._repr_html_(), 'pokemon': pokemon
+        'map': folium_map._repr_html_(), 'pokemon': chosen_pokemon
     })
