@@ -67,7 +67,7 @@ def show_pokemon(request, pokemon_id):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
     previous_pokemon = pokemon.previous_evolution
-    next_pokemon = pokemon.evolutions.first()
+    next_pokemon = pokemon.next_evolution.first()
     try:
         previous_pokemon_evolution = {
             "pokemon_id": previous_pokemon.id,
@@ -89,7 +89,7 @@ def show_pokemon(request, pokemon_id):
 
     chosen_pokemon = {
         "title_ru": pokemon.title,
-        "img_url": request.build_absolute_uri(pokemon.image.url),
+        "img_url": pokemon.image.url,
         "title_en": pokemon.title_en,
         "title_jp": pokemon.title_jp,
         "description": pokemon.description,
