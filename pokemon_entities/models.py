@@ -13,6 +13,11 @@ class Pokemon(models.Model):
                                            blank=True,
                                            related_name='next_evolution',
                                            on_delete=models.SET_NULL)
+    element_type = models.ManyToManyField('PokemonElementType',
+                                          verbose_name='Типы элемента',
+                                          null=True,
+                                          blank=True
+                                          )
 
     def __str__(self):
         return self.title
@@ -29,3 +34,14 @@ class PokemonEntity(models.Model):
     Strength = models.IntegerField(null=True, blank=True, verbose_name='Сила')
     Defence = models.IntegerField(null=True, blank=True, verbose_name='Защита')
     Stamina = models.IntegerField(null=True, blank=True, verbose_name='Выносливость')
+
+    def __str__(self):
+        return f'{self.pokemon} {self.pokemon.id}'
+
+
+class PokemonElementType(models.Model):
+    title = models.CharField(max_length=200, verbose_name='Тип элемента')
+
+    def __str__(self):
+        return self.title
+
