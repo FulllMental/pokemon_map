@@ -67,7 +67,7 @@ def show_pokemon(request, pokemon_id):
         previous_pokemon_evolution = {
             "pokemon_id": previous_pokemon.id,
             "title_ru": previous_pokemon.title,
-            "img_url": previous_pokemon.image.url,
+            "img_url": request.build_absolute_uri(previous_pokemon.image.url),
         }
     except AttributeError:
         previous_pokemon_evolution = None
@@ -76,7 +76,7 @@ def show_pokemon(request, pokemon_id):
         next_pokemon_evolution = {
             "pokemon_id": next_pokemon.id,
             "title_ru": next_pokemon.title,
-            "img_url": next_pokemon.image.url,
+            "img_url": request.build_absolute_uri(next_pokemon.image.url),
         }
 
     except AttributeError:
