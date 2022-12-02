@@ -12,11 +12,13 @@ class Pokemon(models.Model):
                                            null=True,
                                            blank=True,
                                            related_name='next_evolutions',
-                                           on_delete=models.SET_NULL)
+                                           on_delete=models.SET_NULL
+                                           )
     element_type = models.ManyToManyField('PokemonElementType',
                                           verbose_name='Типы элемента',
                                           null=True,
-                                          blank=True
+                                          blank=True,
+                                          related_name='element_pokemons'
                                           )
 
     def __str__(self):
@@ -24,7 +26,11 @@ class Pokemon(models.Model):
 
 
 class PokemonEntity(models.Model):
-    pokemon = models.ForeignKey(Pokemon, on_delete=models.CASCADE, verbose_name='Покемон')
+    pokemon = models.ForeignKey(Pokemon,
+                                verbose_name='Покемон',
+                                related_name='pokemon_entities',
+                                on_delete=models.CASCADE
+                                )
     lat = models.FloatField(verbose_name='Координаты: широта')
     lon = models.FloatField(verbose_name='Координаты: долгота')
     appeared_at = models.DateTimeField(verbose_name='Время появления')
