@@ -67,7 +67,7 @@ def show_pokemon(request, pokemon_id):
     folium_map = folium.Map(location=MOSCOW_CENTER, zoom_start=12)
 
     previous_pokemon = pokemon.previous_evolution
-    next_pokemon = pokemon.next_evolution.first()
+    next_pokemon = pokemon.next_evolutions.first()
     try:
         previous_pokemon_evolution = {
             "pokemon_id": previous_pokemon.id,
