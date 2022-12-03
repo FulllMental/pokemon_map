@@ -48,6 +48,13 @@ class PokemonEntity(models.Model):
 class PokemonElementType(models.Model):
     title = models.CharField(max_length=200, verbose_name='Тип элемента')
     element_image = models.ImageField(upload_to='elements', null=True, verbose_name='Изображение элемента')
+    strong_against = models.ManyToManyField('PokemonElementType',
+                                            verbose_name='Силён против',
+                                            null=True,
+                                            blank=True,
+                                            related_name='weak_against',
+                                            symmetrical=False
+                                            )
 
     def __str__(self):
         return self.title

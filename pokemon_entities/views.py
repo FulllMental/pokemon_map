@@ -88,7 +88,9 @@ def show_pokemon(request, pokemon_id):
     elements = []
     for pokemon_element in pokemon.element_type.filter():
         elements.append({'title': pokemon_element.title,
-                         'img': request.build_absolute_uri(pokemon_element.element_image.url)})
+                         'img': request.build_absolute_uri(pokemon_element.element_image.url),
+                         'strong_against': [weak.title for weak in pokemon_element.strong_against.filter()]
+                         })
 
 
 
@@ -106,10 +108,10 @@ def show_pokemon(request, pokemon_id):
     pokemon_entities = PokemonEntity.objects.filter(pokemon__title=pokemon)
     for pokemon in pokemon_entities:
         add_pokemon(pokemon,
-            folium_map, pokemon.lat,
-            pokemon.lon,
-            request.build_absolute_uri(pokemon.pokemon.image.url)
-        )
+                    folium_map, pokemon.lat,
+                    pokemon.lon,
+                    request.build_absolute_uri(pokemon.pokemon.image.url)
+                    )
 
     return render(request, 'pokemon.html', context={
         'map': folium_map._repr_html_(), 'pokemon': chosen_pokemon
