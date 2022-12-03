@@ -85,6 +85,12 @@ def show_pokemon(request, pokemon_id):
 
     except AttributeError:
         next_pokemon_evolution = None
+    elements = []
+    for pokemon_element in pokemon.element_type.filter():
+        elements.append({'title': pokemon_element.title,
+                         'img': request.build_absolute_uri(pokemon_element.element_image.url)})
+
+
 
     chosen_pokemon = {
         "title_ru": pokemon.title,
@@ -93,7 +99,8 @@ def show_pokemon(request, pokemon_id):
         "title_jp": pokemon.title_jp,
         "description": pokemon.description,
         "previous_evolution": previous_pokemon_evolution,
-        "next_evolution": next_pokemon_evolution
+        "next_evolution": next_pokemon_evolution,
+        "element_type": elements
     }
 
     pokemon_entities = PokemonEntity.objects.filter(pokemon__title=pokemon)
